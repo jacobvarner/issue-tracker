@@ -9,38 +9,78 @@
 'use strict';
 
 let expect = require('chai').expect;
-let MongoClient = require('mongodb');
-let ObjectId = require('mongodb').ObjectID;
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
 
 const CONNECTION_STRING = process.env.DATABASE;
-MongoClient.connect(CONNECTION_STRING, (err, db) => {});
+mongoose.connect(CONNECTION_STRING);
+
+let issueSchema = new Schema({
+  project: {type: String, required: true},
+  issue_title: {type: String, required: true},
+  issue_text: {type: String, required: true},
+  created_by: {type: String, required: true},
+  assigned_to: String,
+  status_text: String,
+  open: Boolean,
+  created_on: {type: Date, default: Date.now},
+  updated_on: {type: Date, default: Date.now}
+});
+
+let Issue = mongoose.model('Issue', issueSchema);
+
 
 module.exports = (app) => {
 
-  app.route('/api/issues/:project')
+  app.get('/api/issues/:project', (req, res) => {
+    let project = req.params.project;
+  });
   
-    .get((req, res) =>{
-      let project = req.params.project;
-      
-    })
+  app.post('/api/issues/:project', (req, res) => {
+    let project = req.params.project;
+    let issue_title = req.body.issue_title;
+    let issue_text = req.body.issue_text;
+    let created_by = req.body.created_by;
+    let assigned_to = req.body.assigned_to;
+    let status_text = req.body.status_text;
     
-    .post((req, res) => {
-      let project = req.params.project;
-      console.log('POST from ' + project);
-      console.log(res.body);
-      //console.log('issue_title: ' + res.body.issue_title);
-      //console.log('issue_text: ' + res.body.issue_text);
-      //console.log('created_by: ' + res.body.created_by);
-    })
-    
-    .put((req, res) =>{
-      let project = req.params.project;
-      
-    })
-    
-    .delete((req, res) => {
-      let project = req.params.project;
-      
+    let newIssue = Issue({
+      project: project,
+      issue_title: issue_title,
+      issue_text: issue_text,
+      created_by: created_by,
+      assigned_to: assigned_to,
+      status_text: status_text,
+      open: true
     });
+    
+    newIssue.save((err, createdIssue) => {
+      if (err) return;
+      res.json({
+        project: project,
+        issue_title: issue_title,
+        issue_text: issue_text,
+        created_by: created_by,
+        assigned_to: assigned_to,
+        status_text: status_text,
+        open: true,
+        _id: createdIssue._id,
+        created_on: createdIssue.created_on,
+        updated_on: createdIssue.updated_on
+      });
+    });
+    
+  });
+    
+    
+  app.put('/api/issues/:project', (req, res) => {
+    let project = req.params.project;
+
+  })
+    
+  app.delete('/api/issues/:project', (req, res) => {
+    let project = req.params.project;
+
+  });
     
 };
