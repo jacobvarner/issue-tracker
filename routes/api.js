@@ -112,6 +112,22 @@ module.exports = (app) => {
     
   app.delete('/api/issues/:project', (req, res) => {
     let project = req.params.project;
+    let id = req.body._id;
+    
+    if (id === '') {
+      res.send('No _id given');
+      return;
+    }
+    
+    Issue.findByIdAndDelete(id, (err) => {
+      if (err) {
+        res.send('Could not delete ' + id);
+        return;
+      }
+      
+      res.send('Deleted ' + id);
+      return;
+    });
 
   });
     
