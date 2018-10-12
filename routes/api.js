@@ -34,6 +34,34 @@ module.exports = (app) => {
 
   app.get('/api/issues/:project', (req, res) => {
     let project = req.params.project;
+    let id = req.body._id;
+    let issue_title = req.query.issue_title;
+    let issue_text = req.query.issue_text;
+    let created_by = req.query.created_by;
+    let assigned_to = req.query.assigned_to;
+    let status_text = req.query.status_text;
+    let open = req.query.open;
+    
+    let query = {};
+    
+    if (issue_title !== undefined)  query.issue_title = issue_title;
+    if (issue_text !== undefined) query.issue_text = issue_text;
+    if (created_by !== undefined) query.created_by = created_by;
+    if (assigned_to !== undefined) query.assigned_to = assigned_to;
+    if (status_text !== undefined) query.status_text = status_text;
+    if (open !== undefined) query.open = open;
+    
+    query.project = project;
+    
+    Issue.find(query, (err, foundIssues) => {
+      if (err) {
+        res.send('Could not get issues');
+        return;
+      }
+      
+      res.json({ issues: foundIssues });
+      return;
+    });
   });
   
   app.post('/api/issues/:project', (req, res) => {
