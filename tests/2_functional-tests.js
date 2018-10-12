@@ -93,7 +93,7 @@ suite('Functional Tests', () => {
       })
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.equal(res.text, 'missing inputs');
+        assert.equal(res.text, 'Missing required input');
         done();
       });        
     });
@@ -108,7 +108,7 @@ suite('Functional Tests', () => {
       .send({_id: _id1})
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.equal(res.text, 'no updated field sent');
+        assert.equal(res.text, 'No updated field sent.');
         done();
       });        
     });
@@ -119,7 +119,7 @@ suite('Functional Tests', () => {
       .send({_id: _id1, issue_text: 'updated issue text test'})
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.equal(res.text, 'successfully updated');
+        assert.equal(res.text, 'Successfully updated!');
         done();
       });  
     });
@@ -130,7 +130,7 @@ suite('Functional Tests', () => {
       .send({_id: _id2, issue_text: 'updated issue text test for the second issue', open: 'false'})
       .end((err, res) =>{
         assert.equal(res.status, 200);
-        assert.equal(res.text, 'successfully updated');
+        assert.equal(res.text, 'Successfully updated!');
         done();
       });  
     });
@@ -182,7 +182,7 @@ suite('Functional Tests', () => {
     test('Multiple filters (test for multiple fields you know will be in the db for a return)', (done) => {
       chai.request(server)
       .get('/api/issues/test')
-      .query({open: false})
+      .query({open: false, issue_title: 'Title'})
       .end((err, res) => {
         assert.equal(res.status, 200);
         assert.property(res.body[0], 'issue_title');
@@ -195,7 +195,7 @@ suite('Functional Tests', () => {
         assert.property(res.body[0], 'status_text');
         assert.property(res.body[0], '_id');
         assert.equal(res.body[0].open, false);
-        assert.equal(res.body[0].issue_title, 'Title 2');
+        assert.equal(res.body[0].issue_title, 'Title');
         done();
       });
     });
@@ -210,7 +210,7 @@ suite('Functional Tests', () => {
       .send({})
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.equal(res.text, '_id error');
+        assert.equal(res.text, 'No _id given');
         done();
       });  
     });
@@ -221,7 +221,7 @@ suite('Functional Tests', () => {
       .send({_id: _id2})
       .end((err, res) => {
         assert.equal(res.status, 200);
-        assert.equal(res.text, 'deleted '+_id2);
+        assert.equal(res.text, 'Deleted '+_id2);
         done();
       });  
     });
